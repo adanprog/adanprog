@@ -1,7 +1,6 @@
 # 👋 ¡Hola! Soy Adán Giménez
 
 
-![Imagen de Perfil](https://media.licdn.com/dms/image/v2/D4D16AQEqZxuwVrGCUQ/profile-displaybackgroundimage-shrink_350_1400/B4DZvbrk7eJsAc-/0/1768917193148?e=1772064000&v=beta&t=YFS378u6RFk12YIwbAA9xQ4TcmnMVlfewYD3Yne3knQ)
 
 <div align="center">
   
