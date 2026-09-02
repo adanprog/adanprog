@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<!--
+  Portfolio de Adán Giménez
+
+  Página de una sola columna dividida en secciones: portada, sobre mí,
+  stack, áreas, proyectos y contacto. Solo HTML, CSS y JavaScript, sin
+  frameworks ni nada que haya que compilar: se abre el archivo y funciona.
+
+  El lang="es" de abajo le dice al navegador y a los buscadores que el
+  contenido está en español. También lo usan los lectores de pantalla
+  para pronunciarlo bien.
+-->
+<html lang="es">
+<head>
+  <!-- Sin esto las tildes y las eñes salen como símbolos raros -->
+  <meta charset="UTF-8" />
+  <!-- Hace que en el móvil se vea a su tamaño real y no como una web
+         de escritorio encogida. En cualquier página responsive es obligatorio. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Adán Giménez | Desarrollador de Software</title>
+
+  <!-- Esta descripción es el texto gris que sale bajo el título en Google -->
+  <meta name="description" content="Portfolio de Adán Giménez, desarrollador de software especializado en Java, desarrollo web y SQL. Formación en Desarrollo de Aplicaciones Multiplataforma (DAM). Disponible para nuevas oportunidades." />
+  <meta name="author" content="Adán Giménez" />
+  <meta name="theme-color" content="#080b14" />
+
+  <!-- Etiquetas Open Graph: controlan la tarjeta que aparece al pegar el
+         enlace en LinkedIn, WhatsApp o Twitter. Sin ellas cada red se
+         inventa lo que enseña. -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Adán Giménez | Desarrollador de Software" />
+  <meta property="og:description" content="Desarrollador de software · Java · Desarrollo web · SQL" />
+  <meta property="og:url" content="https://adanprog.github.io/adanprog/" />
+  <meta property="og:image" content="https://avatars.githubusercontent.com/u/242479265?v=4" />
+  <meta name="twitter:card" content="summary" />
+
+  <!-- Dirección "oficial" de la página, por si se llegara a ella desde
+         varias URLs distintas -->
+  <link rel="canonical" href="https://adanprog.github.io/adanprog/" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+
+  <!-- Marca que hay JS: sin esto el contenido nunca se oculta a la espera del scroll -->
+  <script>document.documentElement.className += " js";</script>
+
+  <!-- preconnect abre la conexión con Google Fonts antes de que haga falta,
+         así las tipografías tardan un poco menos en llegar -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Enlace para saltarse el menú. No se ve, solo aparece al llegar a él
+         con el tabulador. Quien navega con teclado agradece no tener que
+         pasar por los seis enlaces del menú en cada página. -->
+  <a class="skipLink" href="#home">Saltar al contenido</a>
+
+  <!-- La barrita fina de arriba que se va llenando según bajas.
+         aria-hidden="true" la esconde de los lectores de pantalla: es
+         decoración, y leerla en voz alta solo molestaría. -->
+  <div class="scrollProgress" aria-hidden="true"><span id="progressBar"></span></div>
+
+  <!-- Fondo: tres manchas de color difuminadas que se mueven despacio,
+         más una rejilla muy tenue por encima. Son divs vacíos porque todo
+         el aspecto se lo da el CSS; aquí solo hacen falta los huecos. -->
+  <div class="aurora" aria-hidden="true">
+    <span class="aurora__blob aurora__blob--1"></span>
+    <span class="aurora__blob aurora__blob--2"></span>
+    <span class="aurora__blob aurora__blob--3"></span>
+  </div>
+  <div class="gridOverlay" aria-hidden="true"></div>
+
+  <!-- Cabecera. Se queda pegada arriba al bajar (position: sticky en el
+         CSS) y se compacta un poco, eso lo controla el JavaScript. -->
+  <header class="topbar" id="topbar">
+    <div class="container topbar__inner">
+      <a class="brand" href="#home">
+        <span class="brand__mark">A</span>
+        <span class="brand__text">adanprog</span>
+      </a>
+
+      <!-- Los href apuntan a los id de cada sección: al pulsarlos el navegador
+             baja hasta ella. El aria-label describe el menú para quien no lo ve. -->
+      <nav class="nav" id="nav" aria-label="Navegación principal">
+        <a class="nav__link" href="#about">Sobre mí</a>
+        <a class="nav__link" href="#skills">Stack</a>
+        <a class="nav__link" href="#focus">Áreas</a>
+        <a class="nav__link" href="#projects">Proyectos</a>
+        <a class="nav__link" href="#contact">Contacto</a>
+        <a class="button button--sm nav__cta" href="#contact">Hablemos</a>
+      </nav>
+
+      <!-- Botón de las tres rayas, solo visible en móvil. Los tres <span>
+             vacíos son las rayas, que el CSS convierte en una X al abrirlo.
+             aria-expanded lo va cambiando el JS entre true y false. -->
+      <button class="menuToggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ====== HERO ====== -->
+    <section id="home" class="hero" aria-label="Presentación">
+      <div class="container hero__grid">
+        <div class="hero__content">
+          <!-- La píldora verde de "disponible". El span vacío es el puntito que
+                 parpadea. -->
+          <p class="statusPill"><span class="statusPill__dot"></span> Disponible para nuevas oportunidades</p>
+
+          <!-- Solo debe haber un <h1> por página: es el título principal, y tanto
+                 Google como los lectores de pantalla se guían por él. -->
+          <h1 class="hero__title">
+            Hola, soy <span class="gradientText">Adán Giménez</span>
+          </h1>
+
+          <!-- Aquí va el texto que se escribe solo. El span#typed empieza vacío
+                 porque lo rellena el JavaScript letra a letra, y el .caret es la
+                 barrita que parpadea al final imitando un cursor. -->
+          <p class="hero__role">
+            <span class="hero__rolePrefix">&gt;</span>
+            <span id="typed" class="hero__typed"></span><span class="caret" aria-hidden="true"></span>
+          </p>
+
+          <p class="hero__lead">
+            Desarrollador de software con formación en <strong>Desarrollo de Aplicaciones Multiplataforma</strong>.
+            Construyo aplicaciones Java, interfaces web y modelos de datos cuidando el detalle y el código limpio.
+          </p>
+
+          <div class="hero__actions">
+            <a class="button" href="#contact">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6Zm2.4.6L12 12l7.6-5.4H4.4Z"/></svg>
+              Contáctame
+            </a>
+            <a class="button button--ghost" href="#projects">
+              Ver proyectos
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.3 5.3 12 6.7l4.3 4.3H4v2h12.3L12 17.3l1.3 1.4 6.7-6.7-6.7-6.7Z"/></svg>
+            </a>
+          </div>
+
+          <!-- Los iconos van como SVG escritos directamente en el HTML en vez de
+                 como imágenes: así no hay que descargar nada extra y se les puede
+                 cambiar el color desde el CSS. -->
+          <ul class="socials" aria-label="Redes">
+            <li>
+              <a href="https://github.com/adanprog" target="_blank" rel="noreferrer" aria-label="GitHub">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.017 12.017 0 0 0 24 12c0-6.63-5.37-12-12-12Z"/></svg>
+              </a>
+            </li>
+            <li>
+              <a href="https://linkedin.com/in/adangimenez" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.55V9h3.57v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0Z"/></svg>
+              </a>
+            </li>
+            <li>
+              <a href="mailto:adanprog01@gmail.com" aria-label="Email">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6Zm2.4.6L12 12l7.6-5.4H4.4Z"/></svg>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="hero__visual">
+          <!-- La foto con sus adornos: dos aros que giran, un halo difuminado
+                 detrás y las etiquetas que orbitan alrededor. -->
+          <div class="avatarWrap">
+            <span class="avatarWrap__ring avatarWrap__ring--1"></span>
+            <span class="avatarWrap__ring avatarWrap__ring--2"></span>
+            <span class="avatarWrap__glow"></span>
+            <img src="https://avatars.githubusercontent.com/u/242479265?s=460&v=4" alt="Foto de Adán Giménez" class="avatarWrap__img" width="260" height="260" fetchpriority="high" decoding="async" />
+            <!-- Las tecnologías que dan vueltas a la foto. Son decorativas: la
+                   información de verdad está en la sección del stack, por eso van
+                   ocultas para los lectores de pantalla. -->
+            <div class="orbit" aria-hidden="true">
+              <span class="orbit__item orbit__item--1">Java</span>
+              <span class="orbit__item orbit__item--2">SQL</span>
+              <span class="orbit__item orbit__item--3">JS</span>
+              <span class="orbit__item orbit__item--4">PHP</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- El ratoncito animado que invita a seguir bajando -->
+      <a class="scrollHint" href="#about" aria-label="Bajar a la siguiente sección">
+        <span></span>
+      </a>
+    </section>
+
+    <!-- ====== MARQUEE ====== -->
+    <!-- Cinta de tecnologías que se desplaza sin parar.
+           El truco: la lista está escrita dos veces seguidas y la animación
+           mueve la cinta justo la mitad de su ancho. Al terminar vuelve a
+           empezar y, como la segunda mitad es idéntica a la primera, el salto
+           no se nota y parece un bucle infinito. -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track">
+        <span>Java</span><i>◆</i><span>Spring Boot</span><i>◆</i><span>MySQL</span><i>◆</i><span>JavaScript</span><i>◆</i><span>PHP</span><i>◆</i><span>React</span><i>◆</i><span>Angular</span><i>◆</i><span>MongoDB</span><i>◆</i><span>Firebase</span><i>◆</i><span>Supabase</span><i>◆</i><span>Git</span><i>◆</i><span>Oracle</span><i>◆</i><span>HTML5</span><i>◆</i><span>CSS3</span><i>◆</i>
+        <span>Java</span><i>◆</i><span>Spring Boot</span><i>◆</i><span>MySQL</span><i>◆</i><span>JavaScript</span><i>◆</i><span>PHP</span><i>◆</i><span>React</span><i>◆</i><span>Angular</span><i>◆</i><span>MongoDB</span><i>◆</i><span>Firebase</span><i>◆</i><span>Supabase</span><i>◆</i><span>Git</span><i>◆</i><span>Oracle</span><i>◆</i><span>HTML5</span><i>◆</i><span>CSS3</span><i>◆</i>
+      </div>
+    </div>
+
+    <!-- ====== SOBRE MÍ ====== -->
+    <!-- ==================== SOBRE MÍ ====================
+           aria-labelledby enlaza la sección con su propio título, para que
+           un lector de pantalla anuncie "sección Sobre mí" al entrar. -->
+    <section id="about" class="section" aria-labelledby="about-title">
+      <div class="container">
+        <!-- La clase "reveal" marca los bloques que aparecen con una animación
+               al llegar a ellos bajando. De eso se encarga el JavaScript. -->
+        <div class="sectionHead reveal">
+          <p class="eyebrow">01 — Perfil</p>
+          <h2 id="about-title">Sobre mí</h2>
+        </div>
+
+        <div class="about">
+          <div class="about__text reveal">
+            <p>
+              Soy desarrollador junior con formación en <strong>Desarrollo de Aplicaciones Multiplataforma (DAM)</strong>.
+              He trabajado en entornos reales de desarrollo, donde he adquirido experiencia práctica
+              en programación, control de versiones y trabajo en equipo.
+            </p>
+            <p>
+              Mi experiencia previa en el sector de la <strong>electromecánica de vehículos</strong> me aporta
+              algo que no se aprende solo en un aula: organización, resolución de problemas bajo presión
+              y la costumbre de entender un sistema completo antes de tocarlo.
+            </p>
+            <p>
+              Busco un equipo en el que seguir creciendo, aportar desde el primer día y construir
+              software que se mantenga bien a largo plazo.
+            </p>
+          </div>
+
+          <!-- Cuatro datos rápidos en tarjetas. Va como lista porque es
+                 exactamente eso, una lista de datos. -->
+          <ul class="about__facts">
+            <li class="factCard reveal">
+              <span class="factCard__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 1 9l11 6 9-4.91V17h2V9L12 3ZM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82Z"/></svg></span>
+              <h3>Formación</h3>
+              <p>Técnico Superior en Desarrollo de Aplicaciones Multiplataforma</p>
+            </li>
+            <li class="factCard reveal">
+              <span class="factCard__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.14 12.94a7.07 7.07 0 0 0 0-1.88l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.02 7.02 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.59.24-1.13.56-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.65 8.84a.5.5 0 0 0 .12.64l2.03 1.58a7.07 7.07 0 0 0 0 1.88l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.13.22.39.31.6.22l2.39-.96c.5.38 1.04.7 1.63.94l.36 2.54c.04.24.25.42.5.42h3.84c.25 0 .46-.18.5-.42l.36-2.54c.59-.24 1.13-.56 1.63-.94l2.39.96c.22.09.47 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58ZM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2Z"/></svg></span>
+              <h3>Experiencia previa</h3>
+              <p>Electromecánica de vehículos: trabajo en equipo en entornos dinámicos</p>
+            </li>
+            <li class="factCard reveal">
+              <span class="factCard__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/></svg></span>
+              <h3>Modalidad</h3>
+              <p>Abierto a presencial, híbrido o remoto</p>
+            </li>
+            <li class="factCard reveal">
+              <span class="factCard__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.93 6h-2.95a15.6 15.6 0 0 0-1.38-3.56A8.03 8.03 0 0 1 18.93 8ZM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96ZM4.26 14a7.9 7.9 0 0 1 0-4h3.38a16.5 16.5 0 0 0 0 4H4.26Zm.81 2h2.95c.32 1.25.78 2.45 1.38 3.56A7.99 7.99 0 0 1 5.07 16Zm2.95-8H5.07a7.99 7.99 0 0 1 4.33-3.56A15.6 15.6 0 0 0 8.02 8ZM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82A13.7 13.7 0 0 1 12 19.96ZM14.34 14H9.66a14.7 14.7 0 0 1 0-4h4.68a14.7 14.7 0 0 1 0 4Zm.26 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95a8.03 8.03 0 0 1-4.33 3.56ZM16.36 14a16.5 16.5 0 0 0 0-4h3.38a7.9 7.9 0 0 1 0 4h-3.38Z"/></svg></span>
+              <h3>Idiomas</h3>
+              <p>Español nativo · Inglés técnico</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== STACK ====== -->
+    <!-- ==================== STACK ==================== -->
+    <section id="skills" class="section" aria-labelledby="skills-title">
+      <div class="container">
+        <div class="sectionHead sectionHead--center reveal">
+          <p class="eyebrow">02 — Tecnologías</p>
+          <h2 id="skills-title">Stack tecnológico</h2>
+          <p class="lead">Las herramientas con las que trabajo en el día a día.</p>
+        </div>
+
+        <div class="grid grid--cards">
+          <article class="card spot reveal">
+            <div class="card__icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.4 16.6-4.2-4.2 4.2-4.2L8 6.8 2.4 12.4 8 18l1.4-1.4Zm5.2 0 4.2-4.2-4.2-4.2L16 6.8l5.6 5.6L16 18l-1.4-1.4Z"/></svg>
+            </div>
+            <!-- La clase "spot" activa el brillo que sigue al ratón por la tarjeta -->
+            <h3>Lenguajes</h3>
+            <ul class="chips">
+              <li>Java</li><li>SQL</li><li>JavaScript</li><li>PHP</li><li>HTML5</li><li>CSS3</li>
+            </ul>
+          </article>
+
+          <article class="card spot reveal">
+            <div class="card__icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c4.42 0 8 1.34 8 3v14c0 1.66-3.58 3-8 3s-8-1.34-8-3V5c0-1.66 3.58-3 8-3Zm0 2c-3.53 0-6 .93-6 1s2.47 1 6 1 6-.93 6-1-2.47-1-6-1Zm6 4.2c-1.5.7-3.7 1-6 1s-4.5-.3-6-1V12c.4.5 2.7 1.3 6 1.3s5.6-.8 6-1.3V8.2Zm0 6c-1.5.7-3.7 1-6 1s-4.5-.3-6-1V19c0 .07 2.47 1 6 1s6-.93 6-1v-4.8Z"/></svg>
+            </div>
+            <h3>Bases de datos</h3>
+            <ul class="chips">
+              <li>MySQL</li><li>Oracle</li><li>MongoDB</li><li>SQLite</li><li>Firebase</li><li>Supabase</li>
+            </ul>
+          </article>
+
+          <article class="card spot reveal">
+            <div class="card__icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 3 6.5v11L12 22l9-4.5v-11L12 2Zm0 2.3 6.6 3.3L12 10.9 5.4 7.6 12 4.3ZM5 9.4l6 3v6.9l-6-3V9.4Zm8 9.9v-6.9l6-3v6.9l-6 3Z"/></svg>
+            </div>
+            <h3>Frameworks</h3>
+            <ul class="chips">
+              <li>Spring Boot</li><li>React</li><li>Angular</li><li>Bootstrap</li>
+            </ul>
+          </article>
+
+          <article class="card spot reveal">
+            <div class="card__icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.7 18.6 14 10.9a5.5 5.5 0 0 0-7.1-7.1l3.3 3.3-2.5 2.5-3.3-3.3A5.5 5.5 0 0 0 11.5 14l7.7 7.7 2.5-2.5a.8.8 0 0 0 0-.6Z"/></svg>
+            </div>
+            <h3>Herramientas</h3>
+            <ul class="chips">
+              <li>Git</li><li>Maven</li><li>Docker</li><li>IntelliJ IDEA</li><li>VS Code</li><li>XAMPP</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== ÁREAS ====== -->
+    <!-- ==================== ÁREAS DE ENFOQUE ==================== -->
+    <section id="focus" class="section" aria-labelledby="focus-title">
+      <div class="container">
+        <div class="sectionHead sectionHead--center reveal">
+          <p class="eyebrow">03 — Qué hago</p>
+          <h2 id="focus-title">Áreas de enfoque</h2>
+        </div>
+
+        <div class="grid grid--three">
+          <article class="focusCard spot reveal">
+            <span class="focusCard__num">01</span>
+            <h3>Desarrollo de aplicaciones</h3>
+            <ul class="ticks">
+              <li>Aplicaciones de escritorio con Java</li>
+              <li>Interfaces gráficas con Swing y JavaFX</li>
+              <li>Programación orientada a objetos</li>
+            </ul>
+          </article>
+
+          <article class="focusCard spot reveal">
+            <span class="focusCard__num">02</span>
+            <h3>Entornos web</h3>
+            <ul class="ticks">
+              <li>Frontend con HTML, CSS y JavaScript</li>
+              <li>Backend con PHP y Spring Boot</li>
+              <li>Diseño responsive</li>
+              <li>Integración con APIs REST</li>
+            </ul>
+          </article>
+
+          <article class="focusCard spot reveal">
+            <span class="focusCard__num">03</span>
+            <h3>Bases de datos</h3>
+            <ul class="ticks">
+              <li>Diseño de esquemas relacionales</li>
+              <li>Consultas SQL optimizadas</li>
+              <li>Conexión entre aplicación y BD</li>
+              <li>Backend en la nube con Firebase y Supabase</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== PROYECTOS ====== -->
+    <!-- ==================== PROYECTOS ====================
+           Estas tarjetas no están escritas aquí: el JavaScript se las pide a
+           la API de GitHub al cargar la página y las crea sobre la marcha. -->
+    <section id="projects" class="section" aria-labelledby="projects-title">
+      <div class="container">
+        <div class="sectionHead sectionHead--center reveal">
+          <p class="eyebrow">04 — Trabajo</p>
+          <h2 id="projects-title">Proyectos</h2>
+          <p class="lead">Repositorios públicos, actualizados en directo desde mi GitHub.</p>
+        </div>
+
+        <!-- Las tres tarjetas grises de dentro son un "esqueleto": ocupan el
+               hueco mientras llegan los datos, para que la página no pegue un
+               salto cuando aparezcan las de verdad.
+               aria-live avisa a los lectores de pantalla de que este contenido
+               va a cambiar solo, y aria-busy de que aún se está cargando. -->
+        <div class="grid grid--cards" id="projectsGrid" aria-live="polite" aria-busy="true">
+          <div class="card card--skeleton"><span></span><span></span><span></span></div>
+          <div class="card card--skeleton"><span></span><span></span><span></span></div>
+          <div class="card card--skeleton"><span></span><span></span><span></span></div>
+        </div>
+
+        <p class="center reveal projectsCta">
+          <a class="button button--ghost" href="https://github.com/adanprog?tab=repositories" target="_blank" rel="noreferrer">
+            Ver todo en GitHub
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.3 5.3 12 6.7l4.3 4.3H4v2h12.3L12 17.3l1.3 1.4 6.7-6.7-6.7-6.7Z"/></svg>
+          </a>
+        </p>
+      </div>
+    </section>
+
+    <!-- ====== CONTACTO ====== -->
+    <!-- ==================== CONTACTO ==================== -->
+    <section id="contact" class="section" aria-labelledby="contact-title">
+      <div class="container">
+        <div class="ctaPanel reveal">
+          <div class="sectionHead sectionHead--center">
+            <p class="eyebrow">05 — Contacto</p>
+            <h2 id="contact-title">¿Hablamos?</h2>
+            <p class="lead">
+              Estoy abierto a oportunidades como desarrollador junior y a colaboraciones.
+              Escríbeme y te respondo lo antes posible.
+            </p>
+          </div>
+
+          <div class="grid grid--cards">
+            <article class="card contactCard spot">
+              <div class="card__icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6Zm2.4.6L12 12l7.6-5.4H4.4Z"/></svg>
+              </div>
+              <h3>Email</h3>
+              <a class="contactCard__link" href="mailto:adanprog01@gmail.com">adanprog01@gmail.com</a>
+              <!-- El data-copy es un atributo inventado por nosotros. Cualquier
+                     atributo que empiece por data- es válido y sirve para guardar
+                     información que luego lee el JavaScript, en este caso qué texto
+                     hay que copiar al portapapeles. -->
+              <button class="copyBtn" type="button" data-copy="adanprog01@gmail.com">Copiar dirección</button>
+            </article>
+
+            <article class="card contactCard spot">
+              <div class="card__icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.55V9h3.57v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0Z"/></svg>
+              </div>
+              <h3>LinkedIn</h3>
+              <a class="contactCard__link" href="https://linkedin.com/in/adangimenez" target="_blank" rel="noreferrer">in/adangimenez</a>
+            </article>
+
+            <article class="card contactCard spot">
+              <div class="card__icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.017 12.017 0 0 0 24 12c0-6.63-5.37-12-12-12Z"/></svg>
+              </div>
+              <h3>GitHub</h3>
+              <a class="contactCard__link" href="https://github.com/adanprog" target="_blank" rel="noreferrer">@adanprog</a>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==================== PIE ====================
+         El año lo rellena el JavaScript en el span#year, para no tener que
+         venir a cambiarlo a mano cada enero. -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p class="footer__brand">Adán Giménez</p>
+      <p class="footer__copy">© <span id="year"></span> · Hecho con HTML, CSS y JavaScript</p>
+      <ul class="socials socials--sm">
+        <li>
+          <a href="https://github.com/adanprog" target="_blank" rel="noreferrer" aria-label="GitHub">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.017 12.017 0 0 0 24 12c0-6.63-5.37-12-12-12Z"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="https://linkedin.com/in/adangimenez" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.55V9h3.57v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0Z"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="mailto:adanprog01@gmail.com" aria-label="Email">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6Zm2.4.6L12 12l7.6-5.4H4.4Z"/></svg>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </footer>
+
+  <!-- Botón de volver arriba. Aparece solo cuando has bajado un rato. -->
+  <button class="toTop" id="toTop" type="button" aria-label="Volver arriba">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 5 7 7-1.4 1.4L13 8.8V20h-2V8.8l-4.6 4.6L5 12l7-7Z"/></svg>
+  </button>
+
+  <!-- El script va al final del body a propósito: así el navegador pinta
+         primero todo el contenido y no se queda esperando a descargarlo.
+         Además, cuando se ejecuta, los elementos que busca ya existen. -->
+  <script src="script.js"></script>
+</body>
+</html>

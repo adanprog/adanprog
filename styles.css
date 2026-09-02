@@ -1,0 +1,1609 @@
+/* ==========================================================================
+   Portfolio de Adán Giménez — estilos
+
+   El archivo va de lo general a lo concreto, que es el orden en el que
+   conviene leer y escribir CSS:
+
+     1. Colores y medidas guardados como variables
+     2. Estilos base (lo que afecta a todas las etiquetas)
+     3. El fondo animado
+     4. Cabecera y menú
+     5. Portada
+     6. Secciones y tarjetas
+     7. Pie y botón de subir
+     8. Ajustes para pantallas pequeñas y accesibilidad
+
+   Las clases siguen el estilo BEM: bloque, bloque__elemento y
+   bloque--variante. Por ejemplo .card es una tarjeta, .card__icon es el
+   icono que va dentro y .button--ghost es un botón con otro aspecto.
+   Con nombres así se sabe de qué va cada clase sin ir a buscarla al HTML.
+   ========================================================================== */
+
+/* ====== COLORES Y MEDIDAS ====== */
+/* Aquí guardo los colores, tamaños y tipografías que se repiten por toda
+   la hoja. Son "variables CSS": se declaran en :root (que es el <html>,
+   el elemento más externo) y desde cualquier regla se leen con var().
+
+   La gracia es que si algún día quiero cambiar el azul de la web, toco
+   una línea y cambia en los treinta sitios donde se usa. */
+:root {
+  --bg: #070a12;
+  --bg-soft: #0b1020;
+  --surface: rgba(255, 255, 255, 0.04);
+  --surface-2: rgba(255, 255, 255, 0.07);
+  --border: rgba(255, 255, 255, 0.10);
+  --border-strong: rgba(255, 255, 255, 0.20);
+
+  --text: #eef2f8;
+  --muted: rgba(233, 238, 247, 0.62);
+  --muted-soft: rgba(233, 238, 247, 0.42);
+
+  --accent: #38bdf8;
+  --accent-2: #818cf8;
+  --accent-3: #22d3ee;
+  --accent-grad: linear-gradient(120deg, var(--accent), var(--accent-2));
+
+  --radius: 18px;
+  --radius-sm: 12px;
+  --max: 1140px;
+
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Space Grotesk", "Inter", system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+}
+
+/* ====== ESTILOS BASE ====== */
+/* El asterisco selecciona absolutamente todos los elementos.
+   border-box hace que el padding y el borde vayan incluidos dentro del
+   ancho que le pongas a una caja. Sin esto, un div de 200px con 20px de
+   padding mide 240 en realidad y las cuentas nunca salen. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* scroll-behavior: smooth hace que al pulsar un enlace del menú la página
+   baje deslizándose en vez de dar un salto seco.
+   El scroll-padding-top deja hueco para la cabecera fija: sin él, la
+   sección se coloca justo debajo del borde y el título queda tapado. */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 90px;
+}
+
+/* overflow-x: hidden corta cualquier desbordamiento lateral, que es la
+   causa clásica de que en el móvil aparezca una barra horizontal fea. */
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family: var(--font);
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--bg);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* Quito los puntitos y los márgenes que traen las listas por defecto.
+   Sigo usando <ul> en el HTML porque semánticamente son listas, pero el
+   aspecto lo doy yo. */
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+p {
+  margin: 0 0 1.1rem;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  margin: 0 0 1rem;
+}
+
+h1 {
+  font-size: clamp(2.3rem, 5.5vw, 3.9rem);
+}
+
+h2 {
+  font-size: clamp(1.85rem, 3.6vw, 2.6rem);
+}
+
+h3 {
+  font-size: 1.12rem;
+  letter-spacing: -0.01em;
+}
+
+strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* El color que se ve al seleccionar texto con el ratón */
+::selection {
+  background: rgba(56, 189, 248, 0.3);
+  color: #fff;
+}
+
+/* El recuadro que marca dónde está el foco al navegar con el tabulador.
+   Es tentador quitarlo porque "afea", pero entonces quien no usa ratón se
+   queda sin saber dónde está. Mejor rediseñarlo que eliminarlo.
+   El -visible es la versión lista: solo aparece con teclado, no al hacer clic. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Caja central que usan todas las secciones para alinearse.
+   min() coge el valor más pequeño de los dos: en pantallas grandes se
+   queda en 1140px y en pequeñas ocupa todo menos 2.5rem de márgenes.
+   Un solo renglón hace el trabajo de varias media queries. */
+.container {
+  width: min(100% - 2.5rem, var(--max));
+  margin-inline: auto;
+}
+
+/* El enlace para saltarse el menú vive fuera de la pantalla (-9999px) y
+   solo vuelve al recibir el foco. No se usa display:none porque entonces
+   el tabulador tampoco llegaría a él. */
+.skipLink {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 200;
+  padding: 0.7rem 1.1rem;
+  background: var(--accent);
+  color: #05080f;
+  font-weight: 600;
+  border-radius: 0 0 10px 0;
+}
+
+.skipLink:focus {
+  left: 0;
+}
+
+/* ====== EL FONDO ======
+   Va en position: fixed y con z-index negativo, o sea, pegado a la ventana
+   y por detrás de todo lo demás. Al ser fijo no se mueve con el scroll. */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(56, 189, 248, 0.10), transparent 60%),
+    linear-gradient(180deg, #070a12 0%, #080c18 45%, #06090f 100%);
+}
+
+/* Cada mancha es un círculo de color con un desenfoque enorme encima.
+   Ese blur es justo lo que le da el aspecto de aurora... y también lo que
+   más le cuesta a la tarjeta gráfica, por eso al final del archivo se
+   desactivan en móvil.
+   will-change avisa al navegador de que esto se va a mover, para que lo
+   prepare aparte y no repinte media pantalla en cada fotograma. */
+.aurora__blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.45;
+  will-change: transform;
+}
+
+.aurora__blob--1 {
+  width: 46vw;
+  height: 46vw;
+  top: -10vw;
+  left: -8vw;
+  background: rgba(56, 189, 248, 0.35);
+  animation: float1 22s ease-in-out infinite;
+}
+
+.aurora__blob--2 {
+  width: 40vw;
+  height: 40vw;
+  top: 20vh;
+  right: -10vw;
+  background: rgba(129, 140, 248, 0.32);
+  animation: float2 26s ease-in-out infinite;
+}
+
+.aurora__blob--3 {
+  width: 34vw;
+  height: 34vw;
+  bottom: -12vw;
+  left: 30vw;
+  background: rgba(34, 211, 238, 0.20);
+  animation: float3 30s ease-in-out infinite;
+}
+
+/* Los @keyframes describen una animación: qué aspecto tiene al principio,
+   al final y en los puntos intermedios que quieras. Luego se aplican con
+   la propiedad animation.
+   Se anima transform y no top/left porque transform lo resuelve la tarjeta
+   gráfica sin recalcular la posición del resto de la página. */
+@keyframes float1 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(6vw, 8vh, 0) scale(1.12); }
+}
+
+@keyframes float2 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(-7vw, 10vh, 0) scale(0.9); }
+}
+
+@keyframes float3 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(5vw, -8vh, 0) scale(1.15); }
+}
+
+/* La cuadrícula tenue del fondo. Dos degradados repetidos (uno de líneas
+   horizontales y otro de verticales) forman los cuadros.
+   La máscara hace que se vea arriba y se desvanezca hacia abajo, para que
+   no compita con el contenido. */
+.gridOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 20%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 20%, transparent 80%);
+}
+
+/* ====== BARRA DE PROGRESO ======
+   El contenedor está fijo arriba y el <span> de dentro es el relleno.
+   Su anchura la va cambiando el JavaScript según lo que lleves bajado. */
+.scrollProgress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  z-index: 120;
+  background: transparent;
+}
+
+.scrollProgress span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: var(--accent-grad);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.7);
+}
+
+/* ====== CABECERA ======
+   position: sticky es un híbrido: la cabecera va con el contenido hasta
+   que toca el borde de arriba, y a partir de ahí se queda ahí clavada. */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: background 300ms var(--ease), border-color 300ms var(--ease), backdrop-filter 300ms;
+  border-bottom: 1px solid transparent;
+}
+
+/* Esta clase se la pone el JavaScript en cuanto bajas 20px.
+   backdrop-filter difumina lo que pasa por detrás, el típico efecto de
+   cristal esmerilado. Lleva la versión -webkit- porque Safari la necesita. */
+.topbar.is-stuck {
+  background: rgba(8, 11, 20, 0.78);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border-bottom-color: var(--border);
+}
+
+.topbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 0;
+  transition: padding 300ms var(--ease);
+}
+
+.topbar.is-stuck .topbar__inner {
+  padding: 0.65rem 0;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.brand__mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--accent-grad);
+  color: #05080f;
+  font-size: 1.05rem;
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(56, 189, 248, 0.3);
+  transition: transform 300ms var(--ease);
+}
+
+.brand:hover .brand__mark {
+  transform: rotate(-8deg) scale(1.06);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.nav__link {
+  position: relative;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--muted);
+  border-radius: 999px;
+  transition: color 200ms var(--ease), background 200ms var(--ease);
+}
+
+/* ::after crea un elemento extra al final del enlace sin tocar el HTML.
+   Aquí es la rayita del subrayado: empieza con anchura 0 y crece cuando el
+   enlace está activo. Como se anima el ancho desde el centro, sale hacia
+   los dos lados a la vez. */
+.nav__link::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 2px;
+  width: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+  transform: translateX(-50%);
+  transition: width 260ms var(--ease);
+}
+
+.nav__link:hover {
+  color: var(--text);
+  background: var(--surface-2);
+}
+
+.nav__link.is-active {
+  color: var(--text);
+}
+
+.nav__link.is-active::after {
+  width: 55%;
+}
+
+.nav__cta {
+  margin-left: 0.6rem;
+}
+
+.menuToggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 42px;
+  height: 42px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.menuToggle span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  border-radius: 2px;
+  background: var(--text);
+  transition: transform 280ms var(--ease), opacity 200ms var(--ease);
+}
+
+/* Las tres rayas del botón. Al abrir el menú, la de arriba y la de abajo
+   rotan 45 grados en sentidos opuestos hasta formar una X, y la del medio
+   se desvanece. */
+.menuToggle[aria-expanded="true"] span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.menuToggle[aria-expanded="true"] span:nth-child(2) {
+  opacity: 0;
+}
+
+.menuToggle[aria-expanded="true"] span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ====== PORTADA ====== */
+.hero {
+  position: relative;
+  padding: clamp(3.5rem, 9vw, 7rem) 0 clamp(4rem, 8vw, 6rem);
+}
+
+/* Dos columnas: el texto ocupa algo más que la foto (1.15 contra 0.85).
+   Más abajo, en las media queries, se convierten en una sola columna. */
+.hero__grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: center;
+  gap: clamp(2rem, 5vw, 4rem);
+}
+
+/* El ">" significa "hijo directo", así que esto coge cada bloque de la
+   portada: la píldora, el título, el texto...
+   Todos empiezan invisibles y entran con la misma animación, pero cada
+   uno con un retardo distinto para que aparezcan en cascada. */
+.hero__content > * {
+  opacity: 0;
+  animation: riseIn 0.85s var(--ease) forwards;
+}
+
+.hero__content > *:nth-child(1) { animation-delay: 0.05s; }
+.hero__content > *:nth-child(2) { animation-delay: 0.15s; }
+.hero__content > *:nth-child(3) { animation-delay: 0.25s; }
+.hero__content > *:nth-child(4) { animation-delay: 0.35s; }
+.hero__content > *:nth-child(5) { animation-delay: 0.45s; }
+.hero__content > *:nth-child(6) { animation-delay: 0.55s; }
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.4rem 0.9rem 0.4rem 0.75rem;
+  margin-bottom: 1.4rem;
+  border: 1px solid rgba(52, 211, 153, 0.32);
+  border-radius: 999px;
+  background: rgba(52, 211, 153, 0.10);
+  color: #a7f3d0;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.statusPill__dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #34d399;
+}
+
+/* El puntito verde que late. Es una copia del punto puesta encima que
+   crece y se desvanece en bucle, como las ondas de un radar. */
+.statusPill__dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: #34d399;
+  animation: ping 1.9s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes ping {
+  0%   { transform: scale(1); opacity: 0.8; }
+  80%, 100% { transform: scale(2.6); opacity: 0; }
+}
+
+.hero__title {
+  margin-bottom: 0.5rem;
+}
+
+/* Truco para poner un degradado dentro de las letras: se le da el
+   degradado de fondo al texto, se recorta con background-clip: text y se
+   pone el color transparente, así se ve el fondo a través de las letras.
+   Al animar la posición del fondo, el degradado parece recorrerlas. */
+.gradientText {
+  background: linear-gradient(100deg, #38bdf8, #818cf8 45%, #22d3ee 75%, #38bdf8);
+  background-size: 250% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shine 7s linear infinite;
+}
+
+@keyframes shine {
+  to { background-position: 250% center; }
+}
+
+.hero__role {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2rem;
+  margin-bottom: 1.3rem;
+  font-family: var(--font-mono);
+  font-size: clamp(0.95rem, 2vw, 1.15rem);
+  color: var(--accent-3);
+}
+
+.hero__rolePrefix {
+  color: var(--muted-soft);
+}
+
+/* La barrita que parpadea al final del texto que se escribe solo.
+   steps(2, start) hace que salte entre visible e invisible de golpe, en
+   vez de desvanecerse, que es como parpadea un cursor de verdad. */
+.caret {
+  display: inline-block;
+  width: 9px;
+  height: 1.15em;
+  background: var(--accent);
+  animation: blink 1s steps(2, start) infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.hero__lead {
+  max-width: 52ch;
+  margin-bottom: 2rem;
+  color: var(--muted);
+  font-size: 1.03rem;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-bottom: 2rem;
+}
+
+/* Botones */
+/* ====== BOTONES ======
+   inline-flex permite centrar el icono y el texto y separarlos con gap.
+   El border-radius de 999px redondea las puntas del todo, sea cual sea la
+   altura del botón. */
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.85rem 1.5rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: var(--accent-grad);
+  color: #05080f;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  box-shadow: 0 10px 30px rgba(56, 189, 248, 0.22);
+  transition: transform 250ms var(--ease), box-shadow 250ms var(--ease), filter 250ms var(--ease);
+}
+
+.button svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  transition: transform 250ms var(--ease);
+}
+
+.button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 38px rgba(56, 189, 248, 0.34);
+  filter: brightness(1.06);
+}
+
+.button:hover svg {
+  transform: translateX(3px);
+}
+
+.button--ghost {
+  background: var(--surface);
+  border-color: var(--border-strong);
+  color: var(--text);
+  box-shadow: none;
+}
+
+.button--ghost:hover {
+  background: var(--surface-2);
+  border-color: var(--accent);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+.button--sm {
+  padding: 0.55rem 1.1rem;
+  font-size: 0.85rem;
+}
+
+/* Redes */
+.socials {
+  display: flex;
+  gap: 0.7rem;
+}
+
+/* Los iconos son SVG con fill: currentColor, o sea, cogen el color del
+   texto. Cambiando el color del enlace al pasar por encima, el icono se
+   colorea solo. */
+.socials a {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--muted);
+  transition: transform 250ms var(--ease), color 250ms var(--ease), border-color 250ms var(--ease), background 250ms var(--ease);
+}
+
+.socials svg {
+  width: 19px;
+  height: 19px;
+  fill: currentColor;
+}
+
+.socials a:hover {
+  transform: translateY(-4px);
+  color: var(--accent);
+  border-color: var(--accent);
+  background: rgba(56, 189, 248, 0.10);
+}
+
+.socials--sm a {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+}
+
+/* Avatar */
+.hero__visual {
+  display: grid;
+  place-items: center;
+}
+
+/* ====== LA FOTO Y SUS ADORNOS ======
+   El contenedor es un grid con place-items: center, que centra todo lo de
+   dentro (aros, halo y foto) unos encima de otros.
+   aspect-ratio: 1 lo mantiene cuadrado sin tener que calcular la altura. */
+.avatarWrap {
+  position: relative;
+  width: min(320px, 78vw);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  animation: riseIn 1s var(--ease) 0.3s backwards;
+}
+
+.avatarWrap__img {
+  position: relative;
+  z-index: 2;
+  width: 68%;
+  height: 68%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(56, 189, 248, 0.35);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  animation: bob 6s ease-in-out infinite;
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+
+.avatarWrap__glow {
+  position: absolute;
+  z-index: 1;
+  width: 70%;
+  height: 70%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.45), transparent 70%);
+  filter: blur(30px);
+  animation: pulseGlow 5s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50%      { opacity: 0.9; transform: scale(1.1); }
+}
+
+.avatarWrap__ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+}
+
+.avatarWrap__ring--1 {
+  width: 88%;
+  height: 88%;
+  animation: spin 26s linear infinite;
+}
+
+.avatarWrap__ring--2 {
+  width: 100%;
+  height: 100%;
+  border-style: solid;
+  border-color: rgba(129, 140, 248, 0.18);
+  animation: spin 34s linear infinite reverse;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.orbit {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  --r: min(158px, 38vw);
+}
+
+.orbit__item {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  padding: 0.32rem 0.7rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: rgba(11, 16, 32, 0.9);
+  backdrop-filter: blur(6px);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--accent-3);
+  white-space: nowrap;
+  /* Gira alrededor del avatar y se contra-gira sobre sí mismo para no volcarse */
+  animation: orbit 26s linear infinite;
+}
+
+/* Las etiquetas que orbitan alrededor de la foto.
+   La cadena de transformaciones se lee de izquierda a derecha:
+     1. centrar la etiqueta sobre el centro de la foto
+     2. girar el sistema de coordenadas
+     3. separarla hacia fuera ese radio (--r)
+     4. girarla lo mismo pero al revés, para que el texto no vuelque
+   Sin ese último paso las palabras darían vueltas de campana. */
+@keyframes orbit {
+  from { transform: translate(-50%, -50%) rotate(0deg)   translateX(var(--r)) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg) translateX(var(--r)) rotate(-360deg); }
+}
+
+/* Retardos negativos = arranque desfasado 90º entre chips */
+/* Un mismo @keyframes para las cuatro, repartidas con retardos negativos.
+   Negativo significa "arranca como si ya llevara ese tiempo corriendo":
+   la animación dura 26s, así que -6.5s la coloca a un cuarto de vuelta.
+   Sale más limpio que escribir cuatro animaciones casi iguales. */
+.orbit__item--1 { animation-delay: 0s; }
+.orbit__item--2 { animation-delay: -6.5s; }
+.orbit__item--3 { animation-delay: -13s; }
+.orbit__item--4 { animation-delay: -19.5s; }
+
+.scrollHint {
+  display: grid;
+  place-items: start center;
+  width: 24px;
+  height: 40px;
+  margin: clamp(2rem, 5vw, 3.5rem) auto 0;
+  border: 2px solid var(--border-strong);
+  border-radius: 14px;
+  padding-top: 7px;
+  opacity: 0.6;
+  transition: opacity 250ms var(--ease), border-color 250ms var(--ease);
+}
+
+.scrollHint:hover {
+  opacity: 1;
+  border-color: var(--accent);
+}
+
+.scrollHint span {
+  display: block;
+  width: 4px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--accent);
+  animation: scrollDot 1.8s ease-in-out infinite;
+}
+
+@keyframes scrollDot {
+  0%   { transform: translateY(0); opacity: 1; }
+  70%  { transform: translateY(12px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 0; }
+}
+
+/* ====== CINTA DE TECNOLOGÍAS ======
+   width: max-content en la cinta le deja ocupar lo que necesite, aunque se
+   salga; el overflow: hidden del contenedor recorta lo que sobra.
+   La máscara difumina los dos extremos para que las palabras no aparezcan
+   y desaparezcan de golpe. */
+.marquee {
+  position: relative;
+  overflow: hidden;
+  padding: 1rem 0;
+  border-block: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.02);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+.marquee__track {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  width: max-content;
+  animation: scrollX 38s linear infinite;
+}
+
+.marquee__track span {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--muted-soft);
+  white-space: nowrap;
+  transition: color 250ms var(--ease);
+}
+
+.marquee__track i {
+  color: rgba(56, 189, 248, 0.4);
+  font-size: 0.6rem;
+  font-style: normal;
+}
+
+.marquee:hover .marquee__track span {
+  color: var(--muted);
+}
+
+/* Se desplaza exactamente la mitad. Como en el HTML la lista está escrita
+   dos veces, al llegar al 50% la imagen es idéntica a la del principio y el
+   salto al reiniciar no se ve. */
+@keyframes scrollX {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ====== SECCIONES ======
+   clamp(mínimo, ideal, máximo) da un espaciado que crece con la pantalla
+   pero sin pasarse: nunca baja de 4rem ni sube de 7rem. */
+.section {
+  padding: clamp(4rem, 9vw, 7rem) 0;
+}
+
+.sectionHead {
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.sectionHead--center {
+  text-align: center;
+}
+
+.sectionHead--center .lead {
+  margin-inline: auto;
+}
+
+.eyebrow {
+  display: inline-block;
+  margin-bottom: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.lead {
+  max-width: 58ch;
+  color: var(--muted);
+  margin-bottom: 0;
+}
+
+.center {
+  text-align: center;
+}
+
+/* Reveal al hacer scroll.
+   Se oculta solo si hay JS (clase .js en <html>): si el script falla o tarda,
+   el contenido se ve igualmente en vez de quedarse en blanco. */
+/* Los bloques que aparecen al hacer scroll arrancan transparentes y
+   desplazados hacia abajo; el JavaScript les pone la clase is-visible y la
+   transición hace el resto.
+
+   Fíjate en el ".js" de delante: esa clase se la pone al <html> un script
+   de una línea que hay en el <head>. Si el JavaScript falla o tarda, la
+   clase nunca llega, esta regla no se aplica y el contenido se ve
+   igualmente. Sin esa precaución, media web se quedaría invisible. */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 700ms var(--ease), transform 700ms var(--ease);
+}
+
+.js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Sobre mí */
+.about {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: clamp(2rem, 4vw, 3.5rem);
+  align-items: start;
+}
+
+.about__text p {
+  color: var(--muted);
+  max-width: 60ch;
+}
+
+.about__facts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.factCard {
+  padding: 1.3rem 1.2rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  transition: transform 320ms var(--ease), border-color 320ms var(--ease), background 320ms var(--ease);
+}
+
+.factCard:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-strong);
+  background: var(--surface-2);
+}
+
+.factCard__icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-bottom: 0.85rem;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 10px;
+  background: rgba(56, 189, 248, 0.10);
+  color: var(--accent);
+  transition: transform 320ms var(--ease), background 320ms var(--ease);
+}
+
+.factCard__icon svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.factCard:hover .factCard__icon {
+  transform: translateY(-2px) scale(1.06);
+  background: rgba(56, 189, 248, 0.18);
+}
+
+.factCard h3 {
+  font-size: 0.95rem;
+  margin-bottom: 0.35rem;
+}
+
+.factCard p {
+  margin: 0;
+  font-size: 0.87rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* Grids */
+.grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+/* repeat(auto-fit, minmax(255px, 1fr)) es de lo más útil que tiene CSS
+   Grid: mete tantas columnas como quepan de al menos 255px y reparte el
+   sobrante entre ellas. La cuadrícula se reorganiza sola al cambiar el
+   ancho, sin escribir ni una media query. */
+.grid--cards {
+  grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+}
+
+.grid--three {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+/* Card genérica */
+.card {
+  position: relative;
+  padding: 1.75rem 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+  transition: transform 350ms var(--ease), border-color 350ms var(--ease), box-shadow 350ms var(--ease);
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow);
+}
+
+.card h3 {
+  margin-bottom: 0.9rem;
+}
+
+/* Foco de luz que sigue al cursor */
+/* El brillo que sigue al ratón. El degradado está colocado en las
+   coordenadas --mx y --my, dos variables que el JavaScript va actualizando
+   con la posición del cursor.
+   Vive en un ::before para no estorbar, y pointer-events: none deja que
+   los clics lo atraviesen. */
+.spot::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 50%), rgba(56, 189, 248, 0.13), transparent 65%);
+  transition: opacity 350ms var(--ease);
+}
+
+.spot:hover::before {
+  opacity: 1;
+}
+
+.spot > * {
+  position: relative;
+  z-index: 1;
+}
+
+.card__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 1.1rem;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 13px;
+  background: rgba(56, 189, 248, 0.10);
+  color: var(--accent);
+  transition: transform 350ms var(--ease), background 350ms var(--ease);
+}
+
+.card__icon svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+
+.card:hover .card__icon {
+  transform: translateY(-2px) scale(1.06);
+  background: rgba(56, 189, 248, 0.18);
+}
+
+/* Chips de tecnologías */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.chips li {
+  padding: 0.34rem 0.72rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--muted);
+  transition: transform 220ms var(--ease), color 220ms var(--ease), border-color 220ms var(--ease);
+}
+
+.chips li:hover {
+  transform: translateY(-2px);
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+/* Áreas de enfoque */
+.focusCard {
+  position: relative;
+  padding: 2rem 1.6rem 1.8rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+  transition: transform 350ms var(--ease), border-color 350ms var(--ease), box-shadow 350ms var(--ease);
+}
+
+.focusCard::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--accent-grad);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 450ms var(--ease);
+}
+
+.focusCard:hover {
+  transform: translateY(-6px);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow);
+}
+
+.focusCard:hover::after {
+  transform: scaleX(1);
+}
+
+.focusCard__num {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+}
+
+.ticks li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.55rem;
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
+/* El rombito de cada punto de la lista: un cuadrado pequeño girado 45
+   grados. Va en un ::before, así que no hace falta ponerlo en el HTML. */
+.ticks li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: var(--accent);
+  opacity: 0.75;
+  transform: rotate(45deg);
+}
+
+/* Proyectos */
+.projectCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.projectCard__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.projectCard__top svg {
+  width: 22px;
+  height: 22px;
+  fill: var(--muted-soft);
+  flex-shrink: 0;
+  transition: fill 300ms var(--ease), transform 300ms var(--ease);
+}
+
+.projectCard:hover .projectCard__top svg {
+  fill: var(--accent);
+  transform: translate(3px, -3px);
+}
+
+.projectCard h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  word-break: break-word;
+}
+
+.projectCard__desc {
+  margin: 0;
+  flex: 1;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.projectCard__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.8rem;
+  color: var(--muted-soft);
+}
+
+.projectCard__lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.projectCard__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.projectsCta {
+  margin-top: 2.5rem;
+}
+
+.emptyState {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--muted);
+  padding: 2rem 0;
+}
+
+/* Esqueleto de carga */
+.card--skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  pointer-events: none;
+}
+
+.card--skeleton span {
+  display: block;
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05));
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+.card--skeleton span:first-child { width: 55%; height: 18px; }
+.card--skeleton span:last-child  { width: 75%; }
+
+/* El brillo que recorre las tarjetas grises mientras cargan los proyectos.
+   Es un degradado más ancho que la caja al que se le mueve la posición. */
+@keyframes shimmer {
+  to { background-position: -200% 0; }
+}
+
+/* Contacto */
+.ctaPanel {
+  position: relative;
+  padding: clamp(2.2rem, 5vw, 3.5rem) clamp(1.4rem, 4vw, 3rem);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  background:
+    radial-gradient(ellipse 70% 100% at 50% 0%, rgba(56, 189, 248, 0.10), transparent 70%),
+    rgba(255, 255, 255, 0.025);
+  overflow: hidden;
+}
+
+.contactCard {
+  text-align: center;
+}
+
+.contactCard .card__icon {
+  margin-inline: auto;
+}
+
+.contactCard h3 {
+  margin-bottom: 0.4rem;
+}
+
+.contactCard__link {
+  display: block;
+  font-size: 0.92rem;
+  color: var(--muted);
+  word-break: break-word;
+  transition: color 250ms var(--ease);
+}
+
+.contactCard__link:hover {
+  color: var(--accent);
+}
+
+.copyBtn {
+  margin-top: 0.9rem;
+  padding: 0.42rem 0.95rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 220ms var(--ease), border-color 220ms var(--ease), background 220ms var(--ease);
+}
+
+.copyBtn:hover {
+  color: var(--text);
+  border-color: var(--accent);
+  background: rgba(56, 189, 248, 0.10);
+}
+
+.copyBtn.is-copied {
+  color: #a7f3d0;
+  border-color: rgba(52, 211, 153, 0.5);
+  background: rgba(52, 211, 153, 0.12);
+}
+
+/* ====== PIE ====== */
+.footer {
+  padding: 2.5rem 0;
+  border-top: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.footer__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+}
+
+.footer__brand {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+.footer__copy {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted-soft);
+}
+
+/* Botón de volver arriba. Empieza invisible y desplazado; el JavaScript
+   le pone is-visible al pasar de 500px.
+   Se combina opacity con visibility para que, estando oculto, tampoco se
+   pueda pulsar ni llegar a él con el tabulador. */
+.toTop {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  background: rgba(11, 16, 32, 0.85);
+  backdrop-filter: blur(8px);
+  color: var(--text);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(14px);
+  transition: opacity 300ms var(--ease), transform 300ms var(--ease), visibility 300ms, border-color 250ms;
+}
+
+.toTop svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.toTop.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.toTop:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ====== ADAPTACIÓN A PANTALLAS PEQUEÑAS ======
+   Las media queries aplican reglas solo si se cumple la condición. Van al
+   final a propósito: en CSS, ante dos reglas igual de específicas, gana la
+   última que aparece.
+
+   Aquí las dos columnas de la portada pasan a una, y la foto se coloca
+   arriba con order: -1. */
+@media (max-width: 980px) {
+  .hero__grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .hero__visual {
+    order: -1;
+  }
+
+  .hero__lead {
+    margin-inline: auto;
+  }
+
+  .hero__actions,
+  .socials {
+    justify-content: center;
+  }
+
+  .about {
+    grid-template-columns: 1fr;
+  }
+
+  .about__text p {
+    max-width: none;
+  }
+}
+
+/* A partir de aquí aparece el botón de las tres rayas y el menú pasa a
+   ocupar la pantalla entera. Se oculta con opacity + visibility en vez de
+   display: none porque display no se puede animar. */
+@media (max-width: 860px) {
+  .nav {
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.8rem;
+    background: rgba(6, 9, 16, 0.97);
+    backdrop-filter: blur(12px);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-12px);
+    transition: opacity 300ms var(--ease), transform 300ms var(--ease), visibility 300ms;
+  }
+
+  .nav.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  .nav__link {
+    font-size: 1.25rem;
+    padding: 0.6rem 1.4rem;
+  }
+
+  .nav__cta {
+    margin: 0.8rem 0 0;
+  }
+
+  .menuToggle {
+    display: flex;
+    position: relative;
+    z-index: 120;
+  }
+}
+
+@media (max-width: 640px) {
+  .about__facts {
+    grid-template-columns: 1fr;
+  }
+
+  .footer__inner {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .toTop {
+    right: 1rem;
+    bottom: 1rem;
+  }
+}
+
+/* ==========================================================================
+   Rendimiento en móvil
+   Los blobs difuminados, la rejilla con máscara y los backdrop-filter son
+   capas fijas muy caras: el navegador las descarta al hacer scroll y tiene
+   que volver a rasterizarlas, lo que se ve como un repintado constante.
+   En pantallas pequeñas se sustituyen por fondos planos equivalentes.
+   ========================================================================== */
+@media (max-width: 900px) {
+  .aurora {
+    background:
+      radial-gradient(ellipse 120% 50% at 50% 0%, rgba(56, 189, 248, 0.16), transparent 60%),
+      radial-gradient(ellipse 100% 40% at 80% 35%, rgba(129, 140, 248, 0.12), transparent 65%),
+      linear-gradient(180deg, #070a12 0%, #080c18 45%, #06090f 100%);
+  }
+
+  .aurora__blob,
+  .gridOverlay {
+    display: none;
+  }
+
+  /* Las chips orbitan igual que en escritorio, pero sin backdrop-filter:
+     el desenfoque de fondo sobre un elemento en movimiento es lo caro,
+     no el giro, que va por transform. */
+  .orbit__item {
+    background: #0b1020;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .topbar.is-stuck {
+    background: #080b14;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .nav,
+  .toTop {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .nav {
+    background: #06090f;
+  }
+
+  .toTop {
+    background: #0b1020;
+  }
+
+  /* El halo mantiene el latido, con menos radio de desenfoque para abaratarlo */
+  .avatarWrap__glow {
+    filter: blur(18px);
+  }
+}
+
+/* ====== Accesibilidad: menos movimiento ====== */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal,
+  .hero__content > * {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* Sin animación las chips se apilarían en el mismo punto */
+  .orbit {
+    display: none;
+  }
+}
