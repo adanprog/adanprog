@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<!--
+  Portfolio de Adán Giménez
+
+  Página de una sola columna dividida en secciones: portada, sobre mí,
+  stack, áreas, proyectos y contacto. Solo HTML, CSS y JavaScript, sin
+  frameworks ni nada que haya que compilar: se abre el archivo y funciona.
+
+  El lang="es" de abajo le dice al navegador y a los buscadores que el
+  contenido está en español. También lo usan los lectores de pantalla
+  para pronunciarlo bien.
+-->
+<html lang="es">
+<head>
+  <!-- Sin esto las tildes y las eñes salen como símbolos raros -->
+  <meta charset="UTF-8" />
+  <!-- Hace que en el móvil se vea a su tamaño real y no como una web
+         de escritorio encogida. En cualquier página responsive es obligatorio. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Adán Giménez | Desarrollador de Software</title>
+
+  <!-- Esta descripción es el texto gris que sale bajo el título en Google -->
+  <meta name="description" content="Portfolio de Adán Giménez, desarrollador de software especializado en Java, desarrollo web y SQL. Formación en Desarrollo de Aplicaciones Multiplataforma (DAM). Disponible para nuevas oportunidades." />
+  <meta name="author" content="Adán Giménez" />
+  <meta name="theme-color" content="#080b14" />
+
+  <!-- Etiquetas Open Graph: controlan la tarjeta que aparece al pegar el
+         enlace en LinkedIn, WhatsApp o Twitter. Sin ellas cada red se
+         inventa lo que enseña. -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Adán Giménez | Desarrollador de Software" />
+  <meta property="og:description" content="Desarrollador de software · Java · Desarrollo web · SQL" />
+  <meta property="og:url" content="https://adanprog.github.io/adanprog/" />
+  <meta property="og:image" content="https://avatars.githubusercontent.com/u/242479265?v=4" />
+  <meta name="twitter:card" content="summary" />
+
+  <!-- Dirección "oficial" de la página, por si se llegara a ella desde
+         varias URLs distintas -->
+  <link rel="canonical" href="https://adanprog.github.io/adanprog/" />
+  <link rel="icon" href="logo.png" type="image/png" />
+  <!-- El icono que usa iOS cuando se guarda la web en la pantalla de inicio -->
+  <link rel="apple-touch-icon" href="logo.png" />
+
+  <!-- Marca que hay JS: sin esto el contenido nunca se oculta a la espera del scroll -->
+  <script>document.documentElement.className += " js";</script>
+
+  <!-- preconnect abre la conexión con Google Fonts antes de que haga falta,
+         así las tipografías tardan un poco menos en llegar -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Enlace para saltarse el menú. No se ve, solo aparece al llegar a él
+         con el tabulador. Quien navega con teclado agradece no tener que
+         pasar por los seis enlaces del menú en cada página. -->
+  <a class="skipLink" href="#home">Saltar al contenido</a>
+
+  <!-- La barrita fina de arriba que se va llenando según bajas.
+         aria-hidden="true" la esconde de los lectores de pantalla: es
+         decoración, y leerla en voz alta solo molestaría. -->
+  <div class="scrollProgress" aria-hidden="true"><span id="progressBar"></span></div>
+
+  <!-- Fondo: tres manchas de color difuminadas que se mueven despacio,
+         más una rejilla muy tenue por encima. Son divs vacíos porque todo
+         el aspecto se lo da el CSS; aquí solo hacen falta los huecos. -->
+  <div class="aurora" aria-hidden="true">
+    <span class="aurora__blob aurora__blob--1"></span>
+    <span class="aurora__blob aurora__blob--2"></span>
+    <span class="aurora__blob aurora__blob--3"></span>
+  </div>
+  <div class="gridOverlay" aria-hidden="true"></div>
+
+  <!-- Cabecera. Se queda pegada arriba al bajar (position: sticky en el
+         CSS) y se compacta un poco, eso lo controla el JavaScript. -->
+  <header class="topbar" id="topbar">
+    <div class="container topbar__inner">
+      <a class="brand" href="#home">
+        <img class="brand__mark" src="logo.png" alt="" width="34" height="34" />
+        <span class="brand__text">adanprog</span>
+      </a>
+
+      <!-- Los href apuntan a los id de cada sección: al pulsarlos el navegador
+             baja hasta ella. El aria-label describe el menú para quien no lo ve. -->
+      <nav class="nav" id="nav" aria-label="Navegación principal">
+        <a class="nav__link" href="#about">Sobre mí</a>
+        <a class="nav__link" href="#skills">Stack</a>
+        <a class="nav__link" href="#focus">Áreas</a>
+        <a class="nav__link" href="#projects">Proyectos</a>
+        <a class="nav__link" href="#contact">Contacto</a>
+        <a class="button button--sm nav__cta" href="#contact">Hablemos</a>
+      </nav>
+
+      <!-- Botón de las tres rayas, solo visible en móvil. Los tres <span>
+             vacíos son las rayas, que el CSS convierte en una X al abrirlo.
+             aria-expanded lo va cambiando el JS entre true y false. -->
+      <button class="menuToggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ====== HERO ====== -->
+    <section id="home" class="hero" aria-label="Presentación">
+      <div class="container hero__grid">
+        <div class="hero__content">
+          <!-- La píldora verde de "disponible". El span vacío es el puntito que
+                 parpadea. -->
+          <p class="statusPill"><span class="statusPill__dot"></span> Disponible para nuevas oportunidades</p>
+
+          <!-- Solo debe haber un <h1> por página: es el título principal, y tanto
+                 Google como los lectores de pantalla se guían por él. -->
+          <h1 class="hero__title">
+            Hola, soy <span class="gradientText">Adán Giménez</span>
+          </h1>
+
+          <!-- Aquí va el texto que se escribe solo. El span#typed empieza vacío
+                 porque lo rellena el JavaScript letra a letra, y el .caret es la
+                 barrita que parpadea al final imitando un cursor. -->
+          <p class="hero__role">
+            <span class="hero__rolePrefix">&gt;</span>
+            <span id="typed" class="hero__typed"></span><span class="caret" aria-hidden="true"></span>
+          </p>
+
+          <p class="hero__lead">
+            Desarrollador de software con formación en <strong>Desarrollo de Aplicaciones Multiplataforma</strong>.
+            Construyo aplicaciones Java, interfaces web y modelos de datos cuidando el detalle y el código limpio.
+          </p>
+
+          <div class="hero__actions">
+            <a class="button" href="#contact">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6Zm2.4.6L12 12l7.6-5.4H4.4Z"/></svg>
+              Contáctame
+            </a>
+            <a class="button button--ghost" href="#projects">
+              Ver proyectos
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.3 5.3 12 6.7l4.3 4.3H4v2h12.3L12 17.3l1.3 1.4 6.7-6.7-6.7-6.7Z"/></svg>
+            </a>
+          </div>
+
+          <!-- Los iconos van como SVG escritos directamente en el HTML en vez de
+                 como imágenes: así no hay que descargar nada extra y se les puede
+                 cambiar el color desde el CSS. -->
+          <ul class="socials" aria-label="Redes">
+            <li>
+              <a href="https://github.com/adanprog" target="_blank" rel="noreferrer" aria-label="GitHub">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.017 12.017 0 0 0 24 12c0-6.63-5.37-12-12-12Z"/></svg>
+              </a>
+            </li>
+            <li>
+              <a href="https://linkedin.com/in/adangimenez" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.55V9h3.57v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0Z"/></svg>
+              </a>
+            </li>
+            <li>
+              <a href="mailto:adanprog01@gmail.com" aria-label="Email">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6Zm2.4.6L12 12l7.6-5.4H4.4Z"/></svg>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="hero__visual">
+          <!-- La foto con sus adornos: dos aros que giran, un halo difuminado
+                 detrás y las etiquetas que orbitan alrededor. -->
+          <div class="avatarWrap">
+            <span class="avatarWrap__ring avatarWrap__ring--1"></span>
+            <span class="avatarWrap__ring avatarWrap__ring--2"></span>
+            <span class="avatarWrap__glow"></span>
+            <img src="https://avatars.githubusercontent.com/u/242479265?s=460&v=4" alt="Foto de Adán Giménez" class="avatarWrap__img" width="260" height="260" fetchpriority="high" decoding="async" />
+            <!-- Las tecnologías que dan vueltas a la foto. Son decorativas: la
+                   información de verdad está en la sección del stack, por eso van
+                   ocultas para los lectores de pantalla. -->
+            <div class="orbit" aria-hidden="true">
+              <span class="orbit__item orbit__item--1">Java</span>
+              <span class="orbit__item orbit__item--2">Python</span>
+              <span class="orbit__item orbit__item--3">JS</span>
+              <span class="orbit__item orbit__item--4">PHP</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- El ratoncito animado que invita a seguir bajando -->
+      <a class="scrollHint" href="#about" aria-label="Bajar a la siguiente sección">
+        <span></span>
+      </a>
+    </section>
+
+    <!-- ====== MARQUEE ====== -->
+    <!-- Cinta de tecnologías que se desplaza sin parar.
+           El truco: la lista está escrita dos veces seguidas y la animación
+           mueve la cinta justo la mitad de su ancho. Al terminar vuelve a
+           empezar y, como la segunda mitad es idéntica a la primera, el salto
+           no se nota y parece un bucle infinito. -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track">
+        <span>Java</span><i>◆</i><span>Spring Boot</span><i>◆</i><span>Python</span><i>◆</i><span>JavaScript</span><i>◆</i><span>PHP</span><i>◆</i><span>MySQL</span><i>◆</i><span>SQLite</span><i>◆</i><span>Firebase</span><i>◆</i><span>Supabase</span><i>◆</i><span>Android SDK</span><i>◆</i><span>Git</span><i>◆</i><span>GitHub</span><i>◆</i><span>HTML</span><i>◆</i><span>CSS</span><i>◆</i><span>Bootstrap</span><i>◆</i>
+        <span>Java</span><i>◆</i><span>Spring Boot</span><i>◆</i><span>Python</span><i>◆</i><span>JavaScript</span><i>◆</i><span>PHP</span><i>◆</i><span>MySQL</span><i>◆</i><span>SQLite</span><i>◆</i><span>Firebase</span><i>◆</i><span>Supabase</span><i>◆</i><span>Android SDK</span><i>◆</i><span>Git</span><i>◆</i><span>GitHub</span><i>◆</i><span>HTML</span><i>◆</i><span>CSS</span><i>◆</i><span>Bootstrap</span><i>◆</i>
+      </div>
+    </div>
+
+    <!-- ====== SOBRE MÍ ====== -->
+    <!-- ==================== SOBRE MÍ ====================
+           aria-labelledby enlaza la sección con su propio título, para que
+           un lector de pantalla anuncie "sección Sobre mí" al entrar. -->
+    <section id="about" class="section" aria-labelledby="about-title">
+      <div class="container">
+        <!-- La clase "reveal" marca los bloques que aparecen con una animación
+               al llegar a ellos bajando. De eso se encarga el JavaScript. -->
+        <div class="sectionHead reveal">
+          <p class="eyebrow">01 — Perfil</p>
+          <h2 id="about-title">Sobre mí</h2>
+        </div>
+
+        <div class="about">
+          <div class="about__text reveal">
+            <p>
+              Soy desarrollador junior con formación en <strong>Desarrollo de Aplicaciones Multiplataforma (DAM)</strong>.
+              He trabajado en entornos reales de desarrollo, donde he adquirido experiencia práctica
+              en programación, control de versiones y trabajo en equipo.
+            </p>
+            <p>
+              Mi experiencia previa en el sector de la <strong>electromecánica de vehículos</strong> me aporta
+              algo que no se aprende solo en un aula: organización, resolución de problemas bajo presión
+              y la costumbre de entender un sistema completo antes de tocarlo.
+            </p>
+            <p>
+              Busco un equipo en el que seguir creciendo, aportar desde el primer día y construir
+              software que se mantenga bien a largo plazo.
+            </p>
+          </div>
+
+          <!-- Los datos van como lista de definiciones (<dl>), que es la
+                 etiqueta pensada para pares de término y descripción.
+                 Sin recuadros: solo rayas finas que se colorean al pasar. -->
+          <dl class="fichaList reveal">
+            <div class="fichaList__row">
+              <dt>Formación</dt>
+              <dd>Técnico Superior en Desarrollo de Aplicaciones Multiplataforma</dd>
+            </div>
+            <div class="fichaList__row">
+              <dt>Experiencia previa</dt>
+              <dd>Electromecánica de vehículos</dd>
+            </div>
+            <div class="fichaList__row">
+              <dt>Modalidad</dt>
+              <dd>Presencial, híbrido o remoto</dd>
+            </div>
+            <div class="fichaList__row">
+              <dt>Idiomas</dt>
+              <dd>Español nativo · Inglés técnico</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== STACK ====== -->
+    <!-- ==================== STACK ==================== -->
+    <section id="skills" class="section" aria-labelledby="skills-title">
+      <div class="container">
+        <div class="sectionHead sectionHead--center reveal">
+          <p class="eyebrow">02 — Tecnologías</p>
+          <h2 id="skills-title">Stack tecnológico</h2>
+          <p class="lead">Las herramientas con las que trabajo en el día a día.</p>
+        </div>
+
+        <!-- El stack dibujado como lo que es: las capas de una aplicación,
+               apiladas en perspectiva. Arriba lo que ve el usuario y abajo
+               las herramientas con las que se construye.
+               El efecto 3D y el enfoque al pasar el ratón son solo CSS; el
+               --i de cada capa le dice a la hoja de estilos en qué altura
+               del montón va. -->
+        <div class="layers reveal">
+          <article class="layer" style="--i: 0">
+            <div class="layer__head">
+              <span class="layer__num">01</span>
+              <h3 class="layer__name">Interfaz</h3>
+              <p class="layer__hint">Lo que ve y toca el usuario</p>
+            </div>
+            <ul class="layer__techs">
+              <li>HTML</li>
+              <li>CSS</li>
+              <li>JavaScript</li>
+              <li>Bootstrap</li>
+            </ul>
+          </article>
+
+          <article class="layer" style="--i: 1">
+            <div class="layer__head">
+              <span class="layer__num">02</span>
+              <h3 class="layer__name">Aplicación</h3>
+              <p class="layer__hint">La lógica que hace que funcione</p>
+            </div>
+            <ul class="layer__techs">
+              <li>Java</li>
+              <li>PHP</li>
+              <li>Python</li>
+              <li>Spring Boot</li>
+            </ul>
+          </article>
+
+          <article class="layer" style="--i: 2">
+            <div class="layer__head">
+              <span class="layer__num">03</span>
+              <h3 class="layer__name">Móvil</h3>
+              <p class="layer__hint">Aplicaciones para Android</p>
+            </div>
+            <ul class="layer__techs">
+              <li>Android SDK</li>
+              <li>Android Studio</li>
+            </ul>
+          </article>
+
+          <article class="layer" style="--i: 3">
+            <div class="layer__head">
+              <span class="layer__num">04</span>
+              <h3 class="layer__name">Datos</h3>
+              <p class="layer__hint">Dónde se guarda todo</p>
+            </div>
+            <ul class="layer__techs">
+              <li>MySQL</li>
+              <li>SQLite</li>
+              <li>Firebase</li>
+              <li>Supabase</li>
+            </ul>
+          </article>
+
+          <article class="layer" style="--i: 4">
+            <div class="layer__head">
+              <span class="layer__num">05</span>
+              <h3 class="layer__name">Entorno</h3>
+              <p class="layer__hint">Con lo que construyo y versiono</p>
+            </div>
+            <ul class="layer__techs">
+              <li>Git</li>
+              <li>GitHub</li>
+              <li>Visual Studio Code</li>
+              <li>Eclipse</li>
+              <li>XAMPP</li>
+              <li>Antigravity IDE</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== ÁREAS ====== -->
+    <!-- ==================== ÁREAS DE ENFOQUE ==================== -->
+    <section id="focus" class="section" aria-labelledby="focus-title">
+      <div class="container">
+        <div class="sectionHead sectionHead--center reveal">
+          <p class="eyebrow">03 — Qué hago</p>
+          <h2 id="focus-title">Áreas de enfoque</h2>
+        </div>
+
+        <!-- Acordeón. Uso <details> y <summary>, que son etiquetas de HTML
+               pensadas justo para esto: se abren y se cierran solas al pulsar,
+               funcionan con teclado y las entienden los lectores de pantalla,
+               todo sin una línea de JavaScript.
+               El "open" del primero hace que empiece desplegado. -->
+        <div class="accordion reveal">
+          <details class="accordion__item" name="areas" open>
+            <summary>
+              <span class="accordion__num">01</span>
+              <span class="accordion__title">Desarrollo de aplicaciones</span>
+              <span class="accordion__icon" aria-hidden="true"></span>
+            </summary>
+            <div class="accordion__body">
+              <ul class="ticks">
+                <li>Aplicaciones de escritorio con Java</li>
+                <li>Interfaces gráficas con Swing y JavaFX</li>
+                <li>Programación orientada a objetos</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="accordion__item" name="areas">
+            <summary>
+              <span class="accordion__num">02</span>
+              <span class="accordion__title">Entornos web</span>
+              <span class="accordion__icon" aria-hidden="true"></span>
+            </summary>
+            <div class="accordion__body">
+              <ul class="ticks">
+                <li>Frontend con HTML, CSS y JavaScript</li>
+                <li>Backend con PHP y Spring Boot</li>
+                <li>Diseño responsive</li>
+                <li>Integración con APIs REST</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="accordion__item" name="areas">
+            <summary>
+              <span class="accordion__num">03</span>
+              <span class="accordion__title">Bases de datos</span>
+              <span class="accordion__icon" aria-hidden="true"></span>
+            </summary>
+            <div class="accordion__body">
+              <ul class="ticks">
+                <li>Diseño de esquemas relacionales</li>
+                <li>Consultas SQL optimizadas</li>
+                <li>Conexión entre aplicación y BD</li>
+                <li>Backend en la nube con Firebase y Supabase</li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== PROYECTOS ====== -->
+    <!-- ==================== PROYECTOS ====================
+           Estas tarjetas no están escritas aquí: el JavaScript se las pide a
+           la API de GitHub al cargar la página y las crea sobre la marcha. -->
+    <section id="projects" class="section" aria-labelledby="projects-title">
+      <div class="container">
+        <div class="sectionHead sectionHead--center reveal">
+          <p class="eyebrow">04 — Trabajo</p>
+          <h2 id="projects-title">Proyectos</h2>
+          <p class="lead">Una web en producción y mis repositorios públicos, actualizados en directo desde GitHub.</p>
+        </div>
+
+        <!-- Proyecto destacado. Va fuera de la lista de repositorios y con
+               captura de la web, porque es lo más fuerte que hay aquí: una
+               web de verdad, en producción y con su propio dominio. -->
+        <a class="destacado reveal" href="https://aguedaretratos.com" target="_blank" rel="noreferrer">
+          <div class="destacado__imagen">
+            <img src="aguedaretratos.jpg"
+                 alt="Portada de aguedaretratos.com: el nombre Águeda Nicomedes sobre un retrato a lápiz"
+                 width="1120" height="700" loading="lazy" decoding="async" />
+          </div>
+
+          <div class="destacado__texto">
+            <p class="destacado__etiqueta">
+              <span class="destacado__punto" aria-hidden="true"></span>
+              Proyecto destacado · en línea
+            </p>
+
+            <h3 class="destacado__titulo">aguedaretratos.com</h3>
+
+            <p class="destacado__desc">
+              Web para <strong>Águeda Nicomedes</strong>, artista de retratos a lápiz de grafito.
+              Me encargué del diseño, el desarrollo y la publicación con dominio propio.
+            </p>
+
+            <ul class="destacado__puntos">
+              <li>Portada a pantalla completa y navegación por secciones</li>
+              <li>Galería de obra y página de encargos</li>
+              <li>Adaptada a móvil y optimizada para buscadores</li>
+            </ul>
+
+            <span class="destacado__cta">
+              Visitar la web
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.3 5.3 12 6.7l4.3 4.3H4v2h12.3L12 17.3l1.3 1.4 6.7-6.7-6.7-6.7Z"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <!-- Lista, no cuadrícula de tarjetas: cada repositorio es una fila
+               ancha que reacciona al pasar por encima.
+               El JavaScript la rellena con lo que devuelve la API de GitHub;
+               las filas grises de aquí son el "esqueleto" que ocupa el hueco
+               mientras tanto, para que la página no pegue un salto.
+               aria-live avisa a los lectores de pantalla de que esto cambia
+               solo, y aria-busy de que aún se está cargando. -->
+        <ol class="projectList" id="projectsGrid" aria-live="polite" aria-busy="true">
+          <li class="projectList__skeleton"><span></span></li>
+          <li class="projectList__skeleton"><span></span></li>
+          <li class="projectList__skeleton"><span></span></li>
+        </ol>
+
+        <p class="center reveal projectsCta">
+          <a class="button button--ghost" href="https://github.com/adanprog?tab=repositories" target="_blank" rel="noreferrer">
+            Ver todo en GitHub
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.3 5.3 12 6.7l4.3 4.3H4v2h12.3L12 17.3l1.3 1.4 6.7-6.7-6.7-6.7Z"/></svg>
+          </a>
+        </p>
+      </div>
+    </section>
+
+    <!-- ====== CONTACTO ====== -->
+    <!-- ==================== CONTACTO ==================== -->
+    <section id="contact" class="section" aria-labelledby="contact-title">
+      <div class="container">
+        <!-- Nada de tarjetas aquí: el correo es el protagonista y va en
+               grande, como un titular. Lo demás son enlaces de texto. -->
+        <div class="sectionHead sectionHead--center reveal">
+          <p class="eyebrow">05 — Contacto</p>
+          <h2 id="contact-title">¿Hablamos?</h2>
+          <p class="lead">
+            Estoy abierto a oportunidades como desarrollador junior y a colaboraciones.
+            Escríbeme y te respondo lo antes posible.
+          </p>
+        </div>
+
+        <!-- Una ventana de terminal de mentira: la información de contacto
+               como si fuera la salida de un comando. Es un <dl> por debajo,
+               que es la etiqueta correcta para pares de dato y valor. -->
+        <div class="terminal reveal">
+          <div class="terminal__bar">
+            <span class="terminal__dot" aria-hidden="true"></span>
+            <span class="terminal__dot" aria-hidden="true"></span>
+            <span class="terminal__dot" aria-hidden="true"></span>
+            <p class="terminal__name">contacto — adanprog</p>
+          </div>
+
+          <div class="terminal__body">
+            <p class="terminal__cmd"><span class="terminal__prompt">$</span> cat contacto.txt</p>
+
+            <dl class="terminal__out">
+              <div class="terminal__row">
+                <dt>email</dt>
+                <dd>
+                  <a href="mailto:adanprog01@gmail.com">adanprog01@gmail.com</a>
+                  <!-- El data-copy es un atributo inventado por nosotros. Cualquier
+                         atributo que empiece por data- es válido y sirve para guardar
+                         información que luego lee el JavaScript, en este caso qué texto
+                         hay que copiar al portapapeles. -->
+                  <button class="copyBtn" type="button" data-copy="adanprog01@gmail.com">copiar</button>
+                </dd>
+              </div>
+              <div class="terminal__row">
+                <dt>linkedin</dt>
+                <dd><a href="https://linkedin.com/in/adangimenez" target="_blank" rel="noreferrer">in/adangimenez</a></dd>
+              </div>
+              <div class="terminal__row">
+                <dt>github</dt>
+                <dd><a href="https://github.com/adanprog" target="_blank" rel="noreferrer">@adanprog</a></dd>
+              </div>
+              <div class="terminal__row">
+                <dt>estado</dt>
+                <dd class="terminal__ok">disponible para nuevas oportunidades</dd>
+              </div>
+            </dl>
+
+            <p class="terminal__cmd"><span class="terminal__prompt">$</span> <span class="caret" aria-hidden="true"></span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==================== PIE ====================
+         El año lo rellena el JavaScript en el span#year, para no tener que
+         venir a cambiarlo a mano cada enero. -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p class="footer__brand">Adán Giménez</p>
+      <p class="footer__copy">© <span id="year"></span> · Hecho con HTML, CSS y JavaScript</p>
+      <ul class="socials socials--sm">
+        <li>
+          <a href="https://github.com/adanprog" target="_blank" rel="noreferrer" aria-label="GitHub">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.017 12.017 0 0 0 24 12c0-6.63-5.37-12-12-12Z"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="https://linkedin.com/in/adangimenez" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.55V9h3.57v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0Z"/></svg>
+          </a>
+        </li>
+        <li>
+          <a href="mailto:adanprog01@gmail.com" aria-label="Email">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6Zm2.4.6L12 12l7.6-5.4H4.4Z"/></svg>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </footer>
+
+  <!-- Botón de volver arriba. Aparece solo cuando has bajado un rato. -->
+  <button class="toTop" id="toTop" type="button" aria-label="Volver arriba">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 5 7 7-1.4 1.4L13 8.8V20h-2V8.8l-4.6 4.6L5 12l7-7Z"/></svg>
+  </button>
+
+  <!-- El script va al final del body a propósito: así el navegador pinta
+         primero todo el contenido y no se queda esperando a descargarlo.
+         Además, cuando se ejecuta, los elementos que busca ya existen. -->
+  <script src="script.js"></script>
+</body>
+</html>
